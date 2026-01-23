@@ -70,6 +70,14 @@ for box in Boxes:
                         basePath, 'BH_Mass', p_type=5, desired_redshift=z
                     )[0] * 1e10 / h
 
+                    BH_U = get_particle_property_LTU(
+                        basePath, 'BH_U', p_type=5, desired_redshift=z
+                    )[0] 
+
+                    BH_Density = get_particle_property_LTU(
+                        basePath, 'BH_Density', p_type=5, desired_redshift=z
+                    )[0] * (1e10 / h) / (a[i]/h)**3
+
                     BH_Hsml = get_particle_property_LTU(
                         basePath, 'BH_Hsml', p_type=5, desired_redshift=z
                     )[0] * a[i] / h
@@ -126,6 +134,16 @@ for box in Boxes:
                     T = (gamma - 1) * gas_u_in_hsml / cons.k_B * mu
                     T = T.to(u.K).value
 
+                    # Gas density in radius d
+                    distances = np.linalg.norm(Gas_pos - MMBH_coord,axis=1)
+                    Contributing_gas_mask = distances < d # Only gas cells within d of the BH contribute to accretion
+                    Total_mgas = Gas_Mass[Contributing_gas_mask]
+                
+                    if np.sum(Total_mgas) == 0: # If there's no cells within d, accrete from the nearest cell
+                        Total_mgas = Gas_Mass[np.argmin(distances)]
+                    
+                    rho_in_d = np.sum(Total_mgas)/(4/3 * np.pi * d**3) # Msun/kpc^3
+                    
                     # ----------------------
                     # Write datasets
                     # ----------------------
@@ -137,3 +155,6 @@ for box in Boxes:
 
                     zgrp.attrs['hsml'] = hsml
                     zgrp.attrs['bh_mass'] = BH_Mass[most_massive_BH]
+                    zgrp.attrs['bh_rho'] = BH_Density[most_massive_BH]
+                    zgrp.attrs['bh_U'] = BH_U[most_massive_BH]
+                    zgrp.attrs['rho_in_d'] = rho_in_d                    

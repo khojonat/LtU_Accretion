@@ -2,9 +2,9 @@
 #SBATCH -J load_temp
 #SBATCH -A torrey-group
 #SBATCH --ntasks=1
-#SBATCH --cpus-per-task=8
-#SBATCH --mem=80G
-#SBATCH --time=10:00:00
+#SBATCH --cpus-per-task=20
+#SBATCH --mem-per-cpu=7500
+#SBATCH --time=24:00:00
 #SBATCH -p standard
 #SBATCH --output=logs/temps_%j.out
 #SBATCH --error=logs/temps_%j.err
