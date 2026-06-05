@@ -1,5 +1,5 @@
 # LtU_Accretion
-Repo for code related to my LtU ([Learning the Universe](https://learning-the-universe.org/)) accretion project testing Bondi, ff, and modff accretion models in different environments and with different AGN and stellar feedback strengths ([paper for ff, modff models](https://www.aanda.org/articles/aa/full_html/2025/08/aa54174-25/aa54174-25.html)).
+Repo for code related to my LtU ([Learning the Universe](https://learning-the-universe.org/)) accretion project testing Bondi, ff, and modff accretion models in different environments and with different AGN and stellar feedback strengths ([paper for ff, modff models](https://www.aanda.org/articles/aa/full_html/2025/08/aa54174-25/aa54174-25.html)). The arepo_package file (used to help load in simulation data) depends on having [illustris python](https://github.com/illustristng/illustris_python) installed in the top level directory.
 
 The code used to generate the 7 figures in my paper can be found in LtU_Accretion_Paper_Figs.ipynb, and the corresponding figures in Plots.
 
