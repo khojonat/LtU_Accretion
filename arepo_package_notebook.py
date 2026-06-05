@@ -1,22 +1,11 @@
 import sys
-#sys.path.append('/home/aklantbhowmick/anaconda3/lib/python3.7/site-packages')
-
-#sys.path.append('/home/aklantbhowmick/anaconda3/lib/python3.7/site-packages/scalpy/')
-#sys.path.append('/home/aklantbhowmick/anaconda3/envs/nbodykit-env/lib/python3.6/site-packages/')
-
-#%pylab inline
 import matplotlib.cm as cm  
 import numpy
 import illustris_python.illustris_python as il
-# import illustris_python as il
-# from illustris_python import groupcat
 import os
-#from kdcount import correlate
 import scipy
 import matplotlib as mpl
 import h5py
-
-
 
 def get_redshift_from_snapshot(output_path,snap):
     snapshot_space,redshift_space=get_snapshot_redshift_correspondence(output_path)
