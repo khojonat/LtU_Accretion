@@ -13,16 +13,15 @@ import arepo_package as arepo_package
 # ----------------------
 # User parameters
 # ----------------------
-d = 0.140  # Zoom radius
 
 Filepath = '/project/torrey-group/jkho/LtU_accretion'
 outputpath = 'output'
 
 Boxes = {
     'Zooms': [
-        ['Bondi_zoom_AGN','Bondi_zoom_boost_noAGN_stellar','Bondi_zoom_AGN_0.1stellar','Bondi_zoom_noAGN_0.1stellar'],
-        ['FF_zoom_AGN','FF_zoom_noAGN_stellar','FF_zoom_AGN_0.1stellar','FF_zoom_noAGN_0.1stellar'],
-        ['modFF_zoom_AGN','modFF_zoom_noAGN_stellar','modFF_zoom_AGN_0.1stellar','modFF_zoom_noAGN_0.1stellar']
+        ['Bondi_zoom_AGN', 'Bondi_zoom_boost_noAGN_stellar','Bondi_zoom_AGN_0.1stellar', 'Bondi_zoom_noAGN_0.1stellar'],
+        ['FF_zoom_AGN',    'FF_zoom_noAGN_stellar',         'FF_zoom_AGN_0.1stellar',    'FF_zoom_noAGN_0.1stellar'],
+        ['modFF_zoom_AGN', 'modFF_zoom_noAGN_stellar',      'modFF_zoom_AGN_0.1stellar', 'modFF_zoom_noAGN_0.1stellar']
     ],
     'Constrained': [
         ['Bondi_constrained_AGN_fewseeds_stellar','Bondi_constrained_noAGN_fewseeds_boost','Bondi_constrained_AGN_fewseeds_0.1stellar','Bondi_constrained_noAGN_0.1stellar'],
@@ -44,6 +43,11 @@ h = 0.6774
 # Main loop
 # ----------------------
 for box in Boxes:
+
+    if box == 'Zooms' or box == 'Low_mass_seeds':
+        d = 0.140
+    elif box == 'Constrained':
+        d = 0.375
 
     h5name = f'output/Temps/{box}_gas_BH_properties.hdf5'
     print(f'Writing {h5name}')
@@ -85,6 +89,10 @@ for box in Boxes:
                     BH_pos = get_particle_property_LTU(
                         basePath, 'Coordinates', p_type=5, desired_redshift=z
                     )[0] * a[i] / h
+                    
+                    BH_halo_mass = get_particle_property_LTU(
+                        basePath, 'BH_HostHaloMass', p_type=5, desired_redshift=z
+                    )[0] * 1e10/h
 
                     if len(BH_Mass) == 0 or np.all(np.isnan(BH_Mass)):
                         zgrp.attrs['empty'] = True
@@ -93,6 +101,7 @@ for box in Boxes:
                     most_massive_BH = np.argmax(BH_Mass)
                     hsml = BH_Hsml[most_massive_BH]
                     MMBH_coord = BH_pos[most_massive_BH]
+                    MMBH_halo = BH_halo_mass[most_massive_BH]
 
                     # ----------------------
                     # Load gas properties
@@ -157,4 +166,5 @@ for box in Boxes:
                     zgrp.attrs['bh_mass'] = BH_Mass[most_massive_BH]
                     zgrp.attrs['bh_rho'] = BH_Density[most_massive_BH]
                     zgrp.attrs['bh_U'] = BH_U[most_massive_BH]
-                    zgrp.attrs['rho_in_d'] = rho_in_d                    
+                    zgrp.attrs['rho_in_d'] = rho_in_d
+                    zgrp.attrs['bh_halo_mass'] = MMBH_halo

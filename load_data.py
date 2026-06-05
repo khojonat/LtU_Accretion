@@ -22,7 +22,7 @@ Boxes = ['Zooms', 'Constrained', 'Low_mass_seeds']
 outputpath = 'output'
 
 # Redshifts
-redshifts = np.linspace(25, 6, 20) # redshifts = np.linspace(12, 6, 7)
+redshifts = np.arange(20, 5, -1) # redshifts = np.linspace(12, 6, 7)
 a = 1.0 / (1.0 + redshifts)
 h = 0.6774
 
@@ -42,8 +42,8 @@ for Box in Boxes:
         Simpaths = [
             ['Bondi_zoom_AGN',                 'FF_zoom_AGN',                 'modFF_zoom_AGN'],                 # AGN_S
             ['Bondi_zoom_AGN_0.1stellar',      'FF_zoom_AGN_0.1stellar',      'modFF_zoom_AGN_0.1stellar'],      # AGN_NS
-            ['Bondi_zoom_boost_noAGN_stellar', 'FF_zoom_noAGN_stellar',        'modFF_zoom_noAGN_stellar'],       # NAGN_S
-            ['Bondi_zoom_noAGN_0.1stellar',    'FF_zoom_noAGN_0.1stellar',     'modFF_zoom_noAGN_0.1stellar']     # NAGN_NS
+            ['Bondi_zoom_boost_noAGN_stellar', 'FF_zoom_noAGN_stellar',       'modFF_zoom_noAGN_stellar'],       # NAGN_S
+            ['Bondi_zoom_noAGN_0.1stellar',    'FF_zoom_noAGN_0.1stellar',    'modFF_zoom_noAGN_0.1stellar']     # NAGN_NS
         ]
 
     elif Box == 'Low_mass_seeds':
@@ -51,7 +51,7 @@ for Box in Boxes:
             ['Bondi_lowmass_AGN_fewseeds_z127',            'FF_lowmass_AGN_fewseeds_z127',            'modFF_lowmass_AGN_fewseeds_z127'],
             ['Bondi_lowmass_AGN_fewseeds_lowstellar_z127', 'FF_lowmass_AGN_fewseeds_lowstellar_z127', 'modFF_lowmass_AGN_fewseeds_lowstellar_z127'],
             ['Bondi_lowmass_noAGN_fewseeds_z127',          'FF_lowmass_noAGN_fewseeds_z127',          'modFF_lowmass_noAGN_fewseeds_z127'],
-            ['Bondi_lowmass_noAGN_fewseeds_nostellar_z127','FF_lowmass_noAGN_fewseeds_nostellar_z127','modFF_lowmass_noAGN_fewseeds_nostellar_z127']
+            ['Bondi_lowmass_noAGN_fewseeds_lowstellar_z127','FF_lowmass_noAGN_fewseeds_lowstellar_z127','modFF_lowmass_noAGN_fewseeds_lowstellar_z127']
         ]
 
     elif Box == 'Constrained':
@@ -108,15 +108,17 @@ for Box in Boxes:
             # ---------------------------------------------------
             for i, z in enumerate(redshifts):
 
-                BH_Mass  = get_particle_property_LTU(basePath,'BH_Mass',p_type=5, desired_redshift=z)
-                BH_Mdot  = get_particle_property_LTU(basePath,'BH_Mdot',p_type=5, desired_redshift=z)
-                BH_QM    = get_particle_property_LTU(basePath,'BH_CumMassGrowth_QM',p_type=5, desired_redshift=z)
-                BH_RM    = get_particle_property_LTU(basePath,'BH_CumMassGrowth_RM',p_type=5, desired_redshift=z)
-                BH_Edd   = get_particle_property_LTU(basePath,'BH_MdotEddington',p_type=5, desired_redshift=z)
-                BH_Progs = get_particle_property_LTU(basePath,'BH_Progs',p_type=5, desired_redshift=z)
-                # BH_rho   = get_particle_property_LTU(basePath,'SubfindDensity',p_type=5, desired_redshift=z)
-                    
-                if BH_Mass is None:
+                BH_Mass,zout  = get_particle_property_LTU(basePath,'BH_Mass',p_type=5, desired_redshift=z)
+                BH_Mdot,zout  = get_particle_property_LTU(basePath,'BH_Mdot',p_type=5, desired_redshift=z)
+                BH_QM,zout    = get_particle_property_LTU(basePath,'BH_CumMassGrowth_QM',p_type=5, desired_redshift=z)
+                BH_RM,zout    = get_particle_property_LTU(basePath,'BH_CumMassGrowth_RM',p_type=5, desired_redshift=z)
+                BH_Edd,zout   = get_particle_property_LTU(basePath,'BH_MdotEddington',p_type=5, desired_redshift=z)
+                BH_Progs,zout = get_particle_property_LTU(basePath,'BH_Progs',p_type=5, desired_redshift=z)
+                # BH_rho,zout   = get_particle_property_LTU(basePath,'SubfindDensity',p_type=5, desired_redshift=z)
+                
+                if BH_Mass.shape == (1,) and BH_Mass[0] == 0:
+
+                    print("Appending zeros!")
                                         
                     Masses.append(0)
                     Mdots.append(0)
@@ -126,14 +128,14 @@ for Box in Boxes:
                     
                     continue
 
-                most_massive_ind = np.argmax(BH_Mass[0])
+                most_massive_ind = np.argmax(BH_Mass)
 
-                Masses.append(BH_Mass[0][most_massive_ind] * 1e10 / h)
-                Mdots.append(BH_Mdot[0][most_massive_ind] * 1e10 / 0.978)
-                Accretion_growth.append((BH_QM[0][most_massive_ind] + BH_RM[0][most_massive_ind]) * 1e10 / h)
-                Edd.append(BH_Edd[0][most_massive_ind] * 1e10 / 0.978)
-                Progs.append(BH_Progs[0][most_massive_ind])
-                # rho.append(BH_rho[0][most_massive_ind] * (1e10/h) / (a[i]/h)**3)
+                Masses.append(BH_Mass[most_massive_ind] * 1e10 / h)
+                Mdots.append(BH_Mdot[most_massive_ind] * 1e10 / 0.978)
+                Accretion_growth.append((BH_QM[most_massive_ind] + BH_RM[most_massive_ind]) * 1e10 / h)
+                Edd.append(BH_Edd[most_massive_ind] * 1e10 / 0.978)
+                Progs.append(BH_Progs[most_massive_ind])
+                # rho.append(BH_rho[most_massive_ind] * (1e10/h) / (a[i]/h)**3)
 
             # ---------------------------------------------------
             # Store datasets

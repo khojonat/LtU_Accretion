@@ -1,6 +1,6 @@
 import h5py
 import numpy as np
-import arepo_package as arepo_package
+import arepo_package
 import os
 
 
@@ -45,5 +45,5 @@ def get_particle_property_LTU(basePath,desired_property,p_type, desired_redshift
         
         print(f"Failed to load {desired_property} at redshift {desired_redshift}!")
 
-        return np.array(np.nan), output_redshift
+        return np.array([0]), output_redshift
                 

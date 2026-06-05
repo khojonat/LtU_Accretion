@@ -7,8 +7,9 @@ import sys
 #%pylab inline
 import matplotlib.cm as cm  
 import numpy
-# import illustris_python.illustris_python as il
-import illustris_python as il
+import illustris_python.illustris_python as il
+# import illustris_python as il
+print(il.__path__)
 # from illustris_python import groupcat
 import os
 #from kdcount import correlate
@@ -16,14 +17,10 @@ import scipy
 import matplotlib as mpl
 import h5py
 
-
-
 def get_redshift_from_snapshot(output_path,snap):
     snapshot_space,redshift_space=get_snapshot_redshift_correspondence(output_path)
     diff = abs(snapshot_space-snap)
     return (redshift_space[diff==min(diff)])[0]
-    
-    
 
 def get_snapshot_redshift_correspondence(output_path,file_format='fof_subfind'):
     output_file_names=os.listdir(output_path)
